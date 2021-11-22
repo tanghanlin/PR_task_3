@@ -1,10 +1,9 @@
 from sklearn.datasets import load_digits
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import metrics
-from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 digits = load_digits()
 fig = plt.figure(figsize=(6, 6))
@@ -14,15 +13,20 @@ for i in range(64):
     ax.imshow(digits.images[i], cmap='gray', interpolation="nearest")
     ax.text(0, 7, str(digits.target[i]))
 fig.show()
-x_train, x_test, y_train, y_test = train_test_split(digits.data, digits.target, random_state=0)
+x_train, x_test, y_train, y_test = train_test_split(digits.data, digits.target, test_size=0.25, random_state=0)
 model = RandomForestClassifier(n_estimators=1000)
 model.fit(x_train, y_train)
 pre = model.predict(x_test)
 print(metrics.classification_report(pre, y_test))
 print(metrics.accuracy_score(pre, y_test))
-plt.imshow(metrics.confusion_matrix(pre, y_test),
-           interpolation="nearest", cmap='gray')
-plt.colorbar()
+mat = metrics.confusion_matrix(pre, y_test)
+# plt.imshow(metrics.confusion_matrix(pre, y_test),
+#            interpolation="nearest")
+# plt.colorbar()
+# plt.xlabel("predicted label")
+# plt.ylabel("true label")
+# plt.show()
+sns.heatmap(mat, square=True, annot=True, fmt='d', cbar=False)
 plt.xlabel("predicted label")
 plt.ylabel("true label")
 plt.show()
